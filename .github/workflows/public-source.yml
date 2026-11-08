@@ -1,0 +1,32 @@
+name: Scheduled Hermes public source worker
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: hermes-public-source-worker
+  cancel-in-progress: false
+jobs:
+  public-source-index:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      HERMES_HOME: ${{ runner.temp }}/hermes-public-worker
+      HERMES_SOURCE_REVISION: 2281116525106e3c109993ccb5dc74d02bfc1427
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install pinned official Hermes
+        run: |
+          git clone --filter=blob:none https://github.com/NousResearch/hermes-agent.git "$RUNNER_TEMP/hermes-source"
+          git -C "$RUNNER_TEMP/hermes-source" checkout "$HERMES_SOURCE_REVISION"
+          test "$(git -C "$RUNNER_TEMP/hermes-source" rev-parse HEAD)" = "$HERMES_SOURCE_REVISION"
+          python -m pip install "$RUNNER_TEMP/hermes-source"
+      - name: Native Hermes scheduled source collection
+        run: python scheduled_entry.py
