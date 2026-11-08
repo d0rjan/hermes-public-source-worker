@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 12
     env:
       HERMES_HOME: ${{ github.workspace }}/.hermes-public-worker
-      HERMES_SOURCE_REVISION: 2281116525106e3c109993ccb5dc74d02bfc1427
+      HERMES_SOURCE_REVISION: 2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,6 +27,9 @@ jobs:
           git clone --filter=blob:none https://github.com/NousResearch/hermes-agent.git "$RUNNER_TEMP/hermes-source"
           git -C "$RUNNER_TEMP/hermes-source" checkout "$HERMES_SOURCE_REVISION"
           test "$(git -C "$RUNNER_TEMP/hermes-source" rev-parse HEAD)" = "$HERMES_SOURCE_REVISION"
-          python -m pip install "$RUNNER_TEMP/hermes-source"
+          python -m pip install uv==0.12.6
+          cd "$RUNNER_TEMP/hermes-source"
+          uv sync --frozen --no-dev --no-default-groups
+          echo "$RUNNER_TEMP/hermes-source/.venv/bin" >> "$GITHUB_PATH"
       - name: Native Hermes scheduled source collection
         run: python scheduled_entry.py
