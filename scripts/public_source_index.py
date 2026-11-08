@@ -25,7 +25,9 @@ class Links(HTMLParser):
         href = dict(attrs).get('href', '')
         u = urljoin(self.base, href).split('#')[0]
         parsed = urlparse(u)
-        if parsed.scheme == 'https' and parsed.hostname in ALLOWED and not parsed.query:
+        news_path = ('/news-and-publications/' in parsed.path or
+                     '/news-centre/find-a-media-release/' in parsed.path)
+        if parsed.scheme == 'https' and parsed.hostname in ALLOWED and not parsed.query and news_path:
             self.links.add(u)
 
 def collect(url):
