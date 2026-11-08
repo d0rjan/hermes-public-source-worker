@@ -18,5 +18,5 @@ Execution evidence is retained in the standard workflow log, without artifacts.
 
 This is an intermittent public research worker, not an always-on gateway or
 authenticated browser replacement. Standard public runners are documented as
-free; larger runners and paid storage are not configured. The initial five-minute
-verification cadence should be reduced after the first verified scheduled run.
+free; larger runners and paid storage are not configured. The worker runs every
+six hours after its first automatic native execution was verified successfully.

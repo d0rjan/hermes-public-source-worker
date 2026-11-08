@@ -1,7 +1,7 @@
 name: Scheduled Hermes public source worker
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '47 */6 * * *'
 permissions:
   contents: read
 concurrency:
